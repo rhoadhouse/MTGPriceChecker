@@ -14,5 +14,6 @@ with open("Cards_to_search.txt") as file:
 # search for all cards in list
 for card in cards:
     tcg_driver.search_for_card(card)
+    tcg_driver.select_card_set("")
 
 tcg_driver.quit()

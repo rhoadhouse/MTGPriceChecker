@@ -39,6 +39,18 @@ class TcgPlayer:
         price = self.get_card_price()
         print(f"{card}, {price}")
 
+    def select_card_set(self, set):
+        search_filter = self.driver.find_element(By.CSS_SELECTOR, "div.search-filter[data-testid='searchFilterSet']")
+        all_elements = search_filter.find_elements(By.TAG_NAME, "input")
+        set_names = []
+        for item in all_elements:
+            try:
+                set_names.append(item.get_attribute("id")[0:item.get_attribute("id").index("-filter")])
+            except:
+                pass
+
+        print(set_names)
+
     def get_card_price(self):
         retry_count = 0
         run = True
