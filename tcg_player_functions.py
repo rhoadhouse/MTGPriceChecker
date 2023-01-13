@@ -19,6 +19,7 @@ class TcgPlayer:
         print("debug")
 
     def get_search_bar(self):
+        # accessing the search bar appears to be slow for some reason, maybe due to the autocomplete function on the site.  Loop is to keep searching for it till it is found.
         search = True
         while search == True:
             try:
@@ -31,6 +32,7 @@ class TcgPlayer:
         return search_bar
 
     def search_for_card(self, card):
+        # first select the search bard and then enter the card name
         search_bar = self.get_search_bar()
         search_bar.click()
         search_bar.clear()
@@ -39,17 +41,23 @@ class TcgPlayer:
         price = self.get_card_price()
         print(f"{card}, {price}")
 
-    def select_card_set(self, set):
+    def select_card_set(self, card_set):
         search_filter = self.driver.find_element(By.CSS_SELECTOR, "div.search-filter[data-testid='searchFilterSet']")
         all_elements = search_filter.find_elements(By.TAG_NAME, "input")
+        all_element_checkboxs = search_filter.find_elements(By.CSS_SELECTOR, "span.checkbox__option-value")
+        print(all_element_checkboxs)
         set_names = []
         for item in all_elements:
             try:
                 set_names.append(item.get_attribute("id")[0:item.get_attribute("id").index("-filter")])
             except:
                 pass
-
-        print(set_names)
+        loop_count = 0
+        for item in set_names:
+            if card_set in item.lower():
+                all_element_checkboxs[loop_count].click()
+                return
+            loop_count += 1
 
     def get_card_price(self):
         retry_count = 0
