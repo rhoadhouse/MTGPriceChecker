@@ -15,11 +15,11 @@ with open("Cards_to_search.txt") as file:
     card_data = []
     for item in contents:
         try:
-            card = item[0:item.index(",")]
+            card = str(item[0:item.index(",")])
         except:
             card = ""
         try:
-            card_set = item[item.index(",")+1:item.index("\n")].replace(" ","")
+            card_set = str(item[item.index(",")+1:item.index("\n")]).lower().strip()
         except:
             card_set = ""
         card_data.append({
@@ -31,7 +31,6 @@ with open("Cards_to_search.txt") as file:
 
 # search for all cards in list
 for item in card_data:
-    tcg_driver.search_for_card(item["card"])
-    tcg_driver.select_card_set(item["card_set"])
+    tcg_driver.search_for_card(card=item["card"],card_set=item["card_set"])
 
 tcg_driver.quit()

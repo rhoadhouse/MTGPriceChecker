@@ -2,4 +2,4 @@ Shivan Dragon, core set 2019
 Sol Ring commander,
 black knight,
 mind stone commander,
-stoneforge mystic,worldwake
+stoneforge mystic, worldwake

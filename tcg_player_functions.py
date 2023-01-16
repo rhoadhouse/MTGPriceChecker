@@ -7,6 +7,7 @@ class TcgPlayer:
 
     def __init__(self):
         self.driver = webdriver.Chrome()
+        self.card_search_results = []
 
     def start_session(self):
         self.driver.get("http://www.tcgplayer.com")
@@ -31,41 +32,56 @@ class TcgPlayer:
                 print("error")
         return search_bar
 
-    def search_for_card(self, card):
+    def search_for_card(self, card, card_set):
         # first select the search bard and then enter the card name
         search_bar = self.get_search_bar()
         search_bar.click()
         search_bar.clear()
         search_bar.send_keys(card)
         search_bar.send_keys(Keys.ENTER)
-        price = self.get_card_price()
+        self.get_search_results()
+        price = self.get_card_price(card_set)
         print(f"{card}, {price}")
 
     def select_card_set(self, card_set):
-        search_filter = self.driver.find_element(By.CSS_SELECTOR, "div.search-filter[data-testid='searchFilterSet']")
-        all_elements = search_filter.find_elements(By.TAG_NAME, "input")
-        all_element_checkboxs = search_filter.find_elements(By.CSS_SELECTOR, "span.checkbox__option-value")
-        print(all_element_checkboxs)
-        set_names = []
-        for item in all_elements:
-            try:
-                set_names.append(item.get_attribute("id")[0:item.get_attribute("id").index("-filter")])
-            except:
-                pass
-        loop_count = 0
-        for item in set_names:
-            if card_set in item.lower():
-                all_element_checkboxs[loop_count].click()
-                return
-            loop_count += 1
+        # search_filter = self.driver.find_element(By.CSS_SELECTOR, "div.search-filter[data-testid='searchFilterSet']")
+        # all_elements = search_filter.find_elements(By.TAG_NAME, "input")
+        # all_element_checkboxs = search_filter.find_elements(By.CSS_SELECTOR, "span.checkbox__option-value")
+        # print(all_element_checkboxs)
+        # set_names = []
+        # for item in all_elements:
+        #     try:
+        #         set_names.append(item.get_attribute("id")[0:item.get_attribute("id").index("-filter")])
+        #     except:
+        #         pass
+        # loop_count = 0
+        # for item in set_names:
+        #     if card_set in item.lower():
+        #         all_element_checkboxs[loop_count].click()
+        #         return
+        #     loop_count += 1
+        search_result_sets = [item.find_element(By.CSS_SELECTOR, "span.search-result__subtitle").text.lower() for item in self.card_search_results]
+        # print(search_result_sets)
+        # print(card_set)
+        if card_set in search_result_sets:
+            return search_result_sets.index(card_set)
 
-    def get_card_price(self):
+
+    def get_search_results(self):
+        time.sleep(1)
+        # print(self.driver.find_elements(By.CSS_SELECTOR, "div.search-result"))
+        setattr(self, "card_search_results",self.driver.find_elements(By.CSS_SELECTOR, "div.search-result"))
+        # self.card_search_results = self.driver.find_elements(By.CSS_SELECTOR, "div.search-result")
+        # print(self.card_search_results)
+
+    def get_card_price(self, card_set):
+        set_index = self.select_card_set(card_set)
         retry_count = 0
         run = True
         while run == True:
             try:
-                time.sleep(0.5)
-                card_price = self.driver.find_element(By.CSS_SELECTOR, "span.search-result__market-price--value").text
+                # time.sleep(0.5)
+                card_price = self.card_search_results[set_index].find_element(By.CSS_SELECTOR, "span.search-result__market-price--value").text
                 return card_price
             except:
                 if retry_count > 5:
