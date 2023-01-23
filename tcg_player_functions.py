@@ -40,26 +40,16 @@ class TcgPlayer:
         search_bar.send_keys(card)
         search_bar.send_keys(Keys.ENTER)
         self.get_search_results()
-        price = self.get_card_price(card_set)
-        print(f"{card}, {price}")
+        card_price = self.get_card_price(card_set)
+
+        # return (card, card_set, card_price)
+        return {
+            "card_name": card,
+            "card_set": card_set,
+            "card_price": card_price
+        }
 
     def select_card_set(self, card_set):
-        # search_filter = self.driver.find_element(By.CSS_SELECTOR, "div.search-filter[data-testid='searchFilterSet']")
-        # all_elements = search_filter.find_elements(By.TAG_NAME, "input")
-        # all_element_checkboxs = search_filter.find_elements(By.CSS_SELECTOR, "span.checkbox__option-value")
-        # print(all_element_checkboxs)
-        # set_names = []
-        # for item in all_elements:
-        #     try:
-        #         set_names.append(item.get_attribute("id")[0:item.get_attribute("id").index("-filter")])
-        #     except:
-        #         pass
-        # loop_count = 0
-        # for item in set_names:
-        #     if card_set in item.lower():
-        #         all_element_checkboxs[loop_count].click()
-        #         return
-        #     loop_count += 1
         search_result_sets = [item.find_element(By.CSS_SELECTOR, "span.search-result__subtitle").text.lower() for item in self.card_search_results]
         # print(search_result_sets)
         # print(card_set)
